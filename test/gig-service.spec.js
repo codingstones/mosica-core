@@ -25,20 +25,23 @@ describe('Gig service', () => {
     });
   });
 
-  it('returns the next gigs', () => {
-    return gigService.retrieveNextGigs().then((gigs) => {
-      expect(gigs.length).to.be.equal(2);
+  context('retrieve the next gigs', () =>{
+    it('gets the gigs', () => {
+      return gigService.retrieveNextGigs().then((gigs) => {
+        expect(gigs.length).to.be.equal(2);
 
-      expect(gigs[0].title).to.be.equal('dead broncos');
+        expect(gigs[0].title).to.be.equal('dead broncos');
 
-      expect(gigs[1].title).to.be.equal('celtas cortos');
+        expect(gigs[1].title).to.be.equal('celtas cortos');
+      });
+    });
+
+    it('calls to the external http API', () => {
+      gigService.retrieveNextGigs();
+
+      expect(httpClientStub).calledWith('http://www.mosica.es/api/1/gigs');
     });
   });
 
-
-  it('calls to the external http API', () => {
-    gigService.retrieveNextGigs();
-
-    expect(httpClientStub).calledWith('http://www.mosica.es/api/1/gigs');
-  });
+  
 });
