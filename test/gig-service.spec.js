@@ -4,26 +4,7 @@ var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-class GigService {
-  constructor(httpClient) {
-    this._httpClient = httpClient;
-    this._baseUrl = "http://www.mosica.es/api/1"
-  }
-
-  retrieveNextGigs(){
-    return new Promise((resolve, reject) => {
-      this._httpClient.get(this._baseUrl + '/gigs').then((response) => {
-        resolve(response.body);
-      });
-    });
-  }
-}
-
-class HttpClient {
-  get(url){
-
-  }
-}
+var mosica = require('../index.js');
 
 describe('Gig service', () => {
   let httpClient, gigService, httpClientStub;
@@ -34,8 +15,8 @@ describe('Gig service', () => {
   ];
 
   beforeEach(()=> {
-    httpClient = new HttpClient();
-    gigService = new GigService(httpClient);
+    httpClient = new mosica.HttpClient();
+    gigService = new mosica.GigService(httpClient);
 
     httpClientStub = sinon.stub(httpClient, 'get').returns({
       then: function(resp){
