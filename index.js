@@ -7,15 +7,26 @@ class GigService {
   retrieveNextGigs(){
     return new Promise((resolve, reject) => {
       this._httpClient.get(this._baseUrl + '/gigs').then((response) => {
-        resolve(response.body);
+        resolve(response.body['response']);
       });
     });
   }
 }
 
-class HttpClient {
-  get(url){
+var requests = require('superagent');
 
+class HttpClient {
+  get(url) {
+    return new Promise((resolve, reject) => {
+      requests.get(url).end((err, response) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(response);
+        }
+      });
+    });
   }
 }
 
