@@ -17,9 +17,11 @@ class GigService {
         let gigs_by_day = response.body['response'];
 
         gigs_by_day.forEach((day) => {
-          day.gigs.forEach((gig) => {
-            this._gigs.push(new Gig(gig));
+          let gigs = day.gigs.map((gig) => {
+            return new Gig(gig);
           });
+
+          this._gigs = this._gigs.concat(gigs);
         });
         
         resolve(gigs_by_day);
@@ -29,13 +31,13 @@ class GigService {
 
   retrieveAGig(id){
     return new Promise((resolve, reject) => {
-      this._gigs.forEach((gig) => {
-        if(gig.id == id){
-          resolve(gig);
-          return;
-        }
-      });
-      throw 'Gig not found';
+      let gig = this._gigs.find((gig) => { return (gig.id == id) });
+
+      if(gig) {
+        resolve(gig);
+      } else {
+        throw 'Gig not found';
+      }
     });
   }
 }
