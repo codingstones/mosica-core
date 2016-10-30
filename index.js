@@ -24,6 +24,7 @@ class GigService {
           }
         });
       });
+      throw 'Gig not found';
     });
   }
 }

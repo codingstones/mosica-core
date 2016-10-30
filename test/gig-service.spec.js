@@ -60,5 +60,11 @@ describe('Gig service', () => {
         expect(gig.title).to.be.equal('dead broncos');
       });
     });
+
+    it('gets an inexistent gig', () => {
+      return gigService.retrieveAGig(101).catch((error) => {
+        expect(error).to.be.equal('Gig not found');
+      });
+    });
   });
 });
