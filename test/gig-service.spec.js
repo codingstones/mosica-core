@@ -10,8 +10,8 @@ describe('Gig service', () => {
   let httpClient, gigService, httpClientStub;
 
   const someGigs = [
-    {id: 1, title: "dead broncos"},
-    {id: 2, title: "celtas cortos"},
+    {id: 1, title: "dead broncos", place: "sala lópez"},
+    {id: 2, title: "celtas cortos", place: "las armas"},
   ];
 
   const someGigsByDay = [{
@@ -21,7 +21,8 @@ describe('Gig service', () => {
 
   beforeEach(()=> {
     httpClient = new mosica.HttpClient();
-    gigService = new mosica.GigService(httpClient);
+    matcher = new mosica.Matcher();
+    gigService = new mosica.GigService(httpClient, matcher);
 
     httpClientStub = sinon.stub(httpClient, 'get').returns({
       then: function(resp){
@@ -64,6 +65,35 @@ describe('Gig service', () => {
     it('gets an inexistent gig', () => {
       return gigService.retrieveAGig(101).catch((error) => {
         expect(error).to.be.equal('Gig not found');
+      });
+    });
+  });
+
+  context('search in the next gigs', () =>{
+    beforeEach((done)=> {
+      gigService.retrieveNextGigs().then(()=> {
+        done();
+      });
+    });
+
+    it('find the gigs by title', () => {
+      return gigService.searchGigs('dead').then((gigs) => {
+        expect(gigs.length).to.be.equal(1);
+        expect(gigs[0].title).to.be.equal('dead broncos');
+      });
+    });
+
+    it('find the gigs by place', () => {
+      return gigService.searchGigs('armas').then((gigs) => {
+        expect(gigs.length).to.be.equal(1);
+        expect(gigs[0].title).to.be.equal('celtas cortos');
+      });
+    });
+
+    it('find the gigs normalizing accents', () => {
+      return gigService.searchGigs('lopez').then((gigs) => {
+        expect(gigs.length).to.be.equal(1);
+        expect(gigs[0].title).to.be.equal('dead broncos');
       });
     });
   });

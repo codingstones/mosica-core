@@ -5,10 +5,11 @@ class Gig {
 }
 
 class GigService {
-  constructor(httpClient) {
+  constructor(httpClient, matcher) {
     this._httpClient = httpClient;
     this._baseUrl = "http://www.mosica.es/api/1";
     this._gigs = [];
+    this._matcher = matcher;
   }
 
   retrieveNextGigs(){
@@ -23,7 +24,7 @@ class GigService {
 
           this._gigs = this._gigs.concat(gigs);
         });
-        
+
         resolve(gigs_by_day);
       });
     });
@@ -40,9 +41,21 @@ class GigService {
       }
     });
   }
+
+  searchGigs(term){
+    return new Promise((resolve, reject) => {
+      let matches = []
+      this._gigs.forEach((gig) => {
+        if(this._matcher.hasTheTerm(gig.title, term) || this._matcher.hasTheTerm(gig.place, term)){
+          matches.push(gig)
+        }
+      });
+      resolve(matches);
+    });
+  }
 }
 
-var requests = require('superagent');
+const requests = require('superagent');
 
 class HttpClient {
   get(url) {
@@ -59,7 +72,31 @@ class HttpClient {
   }
 }
 
+class Matcher {
+  constructor(){
+    this.FROM = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛ";
+    this.TO   = "AAAAAEEEEIIIIOOOOUUUU";
+  }
+
+  hasTheTerm(text, term) {
+    if(text){
+      text = this.normalize(text.toUpperCase());
+      term = this.normalize(term.toUpperCase());
+      return (text.indexOf(term)>-1)
+    }
+  }
+
+  normalize(a_string){
+    this.FROM.split("").forEach((change_from, index) => {
+      const change_to = this.TO[index];
+      a_string = a_string.replace(change_from, change_to)
+    });
+    return a_string;
+  }
+}
+
 module.exports = {
   HttpClient: HttpClient,
+  Matcher: Matcher,
   GigService: GigService
 }
