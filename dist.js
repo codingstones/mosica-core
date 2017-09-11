@@ -78,8 +78,6 @@ var GigService = function () {
   return GigService;
 }();
 
-var requests = require('superagent');
-
 var HttpClient = function () {
   function HttpClient() {
     _classCallCheck(this, HttpClient);
@@ -89,6 +87,7 @@ var HttpClient = function () {
     key: 'get',
     value: function get(url) {
       return new Promise(function (resolve, reject) {
+        var requests = require('superagent');
         requests.get(url).end(function (err, response) {
           if (err) {
             reject(err);
