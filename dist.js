@@ -17,6 +17,7 @@ var GigService = function () {
     this._httpClient = httpClient;
     this._baseUrl = "http://www.mosica.es/api/1";
     this._gigs = [];
+    this._gigs_by_day = [];
     this._matcher = matcher;
   }
 
@@ -33,9 +34,10 @@ var GigService = function () {
             var gigs = day.gigs.map(function (gig) {
               return new Gig(gig);
             });
-
             _this._gigs = _this._gigs.concat(gigs);
           });
+
+          _this._gigs_by_day = gigs_by_day;
 
           resolve(gigs_by_day);
         });
@@ -59,19 +61,42 @@ var GigService = function () {
       });
     }
   }, {
-    key: 'searchGigs',
-    value: function searchGigs(term) {
+    key: 'searchGigsGroupedByDay',
+    value: function searchGigsGroupedByDay(term) {
       var _this3 = this;
 
       return new Promise(function (resolve, reject) {
+        var daysWithGigs = [];
+        _this3._gigs_by_day.forEach(function (day) {
+          var gigs = day.gigs.map(function (gig) {
+            if (_this3._gigIsMatching(gig, term)) {
+              return new Gig(gig);
+            }
+          });
+          daysWithGigs.push({ day: day.day, gigs: gigs });
+        });
+        resolve(daysWithGigs);
+      });
+    }
+  }, {
+    key: 'searchGigs',
+    value: function searchGigs(term) {
+      var _this4 = this;
+
+      return new Promise(function (resolve, reject) {
         var matches = [];
-        _this3._gigs.forEach(function (gig) {
-          if (_this3._matcher.hasTheTerm(gig.title, term) || _this3._matcher.hasTheTerm(gig.place, term)) {
-            matches.push(gig);
+        _this4._gigs.forEach(function (gig) {
+          if (_this4._gigIsMatching(gig, term)) {
+            matches.push(new Gig(gig));
           }
         });
         resolve(matches);
       });
+    }
+  }, {
+    key: '_gigIsMatching',
+    value: function _gigIsMatching(gig, term) {
+      return this._matcher.hasTheTerm(gig.title, term) || this._matcher.hasTheTerm(gig.place, term);
     }
   }]);
 
@@ -122,10 +147,10 @@ var Matcher = function () {
   }, {
     key: 'normalize',
     value: function normalize(a_string) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.FROM.split("").forEach(function (change_from, index) {
-        var change_to = _this4.TO[index];
+        var change_to = _this5.TO[index];
         a_string = a_string.replace(change_from, change_to);
       });
       return a_string;
