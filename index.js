@@ -9,6 +9,7 @@ class GigService {
     this._httpClient = httpClient;
     this._baseUrl = "http://www.mosica.es/api/1";
     this._gigs = [];
+    this._gigs_by_day = [];
     this._matcher = matcher;
   }
 
@@ -21,9 +22,10 @@ class GigService {
           let gigs = day.gigs.map((gig) => {
             return new Gig(gig);
           });
-
           this._gigs = this._gigs.concat(gigs);
         });
+
+        this._gigs_by_day = gigs_by_day;
 
         resolve(gigs_by_day);
       });
@@ -42,6 +44,21 @@ class GigService {
     });
   }
 
+  searchGigsGroupedByDay(term){
+    return new Promise((resolve, reject) => {
+      let daysWithGigs = []
+      this._gigs_by_day.forEach((day) => {
+        let gigs = day.gigs.map((gig) => {
+          if(this._gigIsMatching(gig, term)){
+            return new Gig(gig);
+          }
+        });
+        daysWithGigs.push({day: day.day, gigs: gigs})
+      });
+      resolve(daysWithGigs);
+    });
+  }
+
   searchGigs(term){
     return new Promise((resolve, reject) => {
       let matches = []
@@ -52,6 +69,10 @@ class GigService {
       });
       resolve(matches);
     });
+  }
+
+  _gigIsMatching(gig, term) {
+    return this._matcher.hasTheTerm(gig.title, term) || this._matcher.hasTheTerm(gig.place, term);
   }
 }
 

@@ -97,4 +97,17 @@ describe('Gig service', () => {
       });
     });
   });
+
+  context('search in the next gigs grouped by day', () =>{
+    beforeEach(()=> {
+      gigService.retrieveNextGigs()
+    });
+    it('find the gigs by title', () => {
+      return gigService.searchGigsGroupedByDay('dead').then((daysWithGigs) => {
+        let gigs = daysWithGigs[0].gigs;
+
+        expect(gigs[0].title).to.be.equal('dead broncos');
+      });
+    });
+  });
 });
