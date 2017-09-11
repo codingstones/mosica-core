@@ -55,11 +55,10 @@ class GigService {
   }
 }
 
-const requests = require('superagent');
-
 class HttpClient {
   get(url) {
     return new Promise((resolve, reject) => {
+      const requests = require('superagent');
       requests.get(url).end((err, response) => {
         if (err) {
           reject(err);
