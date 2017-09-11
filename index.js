@@ -63,8 +63,8 @@ class GigService {
     return new Promise((resolve, reject) => {
       let matches = []
       this._gigs.forEach((gig) => {
-        if(this._matcher.hasTheTerm(gig.title, term) || this._matcher.hasTheTerm(gig.place, term)){
-          matches.push(gig)
+        if(this._gigIsMatching(gig, term)){
+          matches.push(new Gig(gig));
         }
       });
       resolve(matches);
