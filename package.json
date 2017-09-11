@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "babel": "babel index.js -o dist.js --presets es2015"
+    "babel": "babel index.js -o dist.js "
   },
   "author": "Dani Latorre <dani@danilat.com> (http://www.danilat.com)",
   "license": "ISC",
