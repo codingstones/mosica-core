@@ -73,7 +73,9 @@ var GigService = function () {
               return new Gig(gig);
             }
           });
-          daysWithGigs.push({ day: day.day, gigs: gigs });
+          if (gigs.length > 0) {
+            daysWithGigs.push({ day: day.day, gigs: gigs });
+          }
         });
         resolve(daysWithGigs);
       });

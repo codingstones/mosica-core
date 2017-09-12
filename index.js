@@ -46,14 +46,16 @@ class GigService {
 
   searchGigsGroupedByDay(term){
     return new Promise((resolve, reject) => {
-      let daysWithGigs = []
+      const daysWithGigs = []
       this._gigs_by_day.forEach((day) => {
-        let gigs = day.gigs.map((gig) => {
+        const gigs = day.gigs.map((gig) => {
           if(this._gigIsMatching(gig, term)){
             return new Gig(gig);
           }
         });
-        daysWithGigs.push({day: day.day, gigs: gigs})
+        if (gigs.length > 0){
+          daysWithGigs.push({day: day.day, gigs: gigs})
+        }
       });
       resolve(daysWithGigs);
     });
