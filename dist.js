@@ -68,11 +68,12 @@ var GigService = function () {
       return new Promise(function (resolve, reject) {
         var daysWithGigs = [];
         _this3._gigs_by_day.forEach(function (day) {
-          var gigs = day.gigs.map(function (gig) {
-            if (_this3._gigIsMatching(gig, term)) {
-              return new Gig(gig);
-            }
+          var gigs = day.gigs.filter(function (gig) {
+            return _this3._gigIsMatching(gig, term);
+          }).map(function (gig) {
+            return new Gig(gig);
           });
+
           if (gigs.length > 0) {
             daysWithGigs.push({ day: day.day, gigs: gigs });
           }

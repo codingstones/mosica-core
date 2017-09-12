@@ -48,11 +48,13 @@ class GigService {
     return new Promise((resolve, reject) => {
       const daysWithGigs = []
       this._gigs_by_day.forEach((day) => {
-        const gigs = day.gigs.map((gig) => {
-          if(this._gigIsMatching(gig, term)){
-            return new Gig(gig);
-          }
-        });
+        const gigs = day.gigs
+          .filter((gig) => {
+            return this._gigIsMatching(gig, term)
+          }).map((gig) => {
+            return new Gig(gig)
+          });
+
         if (gigs.length > 0){
           daysWithGigs.push({day: day.day, gigs: gigs})
         }
