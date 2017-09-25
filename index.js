@@ -16,7 +16,7 @@ class GigService {
   retrieveNextGigs(){
     return new Promise((resolve, reject) => {
       this._httpClient.get(this._baseUrl + '/gigs').then((response) => {
-        let gigs_by_day = response.body['response'];
+        let gigs_by_day = response;
 
         gigs_by_day.forEach((day) => {
           let gigs = day.gigs.map((gig) => {
@@ -89,7 +89,7 @@ class HttpClient {
           reject(err);
         }
         else {
-          resolve(response);
+          resolve(response.body['response']);
         }
       });
     });

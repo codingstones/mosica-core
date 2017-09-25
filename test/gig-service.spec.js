@@ -26,7 +26,7 @@ describe('Gig service', () => {
 
     httpClientStub = sinon.stub(httpClient, 'get').returns({
       then: function(resp){
-        return resp({body: {response: someGigsByDay}});
+        return resp(someGigsByDay);
       }
     });
   });
